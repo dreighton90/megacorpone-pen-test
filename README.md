@@ -1,100 +1,63 @@
 # 🛡️ MegaCorpOne Penetration Test
 
-This project documents a simulated penetration test engagement performed against a fictional company, **MegaCorpOne**. The engagement followed a structured five-phase methodology commonly used by red teamers and offensive security professionals.
+## 🧠 Executive Summary
 
-> ✅ **Goal:** Identify vulnerabilities, exploit weaknesses, and gain root access using real-world tools and tactics in a lab-based environment.
+This offensive security lab simulates a real-world penetration test against a fictional company, MegaCorpOne. The objective was to assess system vulnerabilities, exploit misconfigurations, and demonstrate post-exploitation techniques in a controlled lab environment. This project reflects a structured five-phase attack methodology and highlights hands-on skills in network scanning, credential harvesting, privilege escalation, and data exfiltration.
 
----
+## ✅ Realism and Business Relevance
 
-## 📌 Engagement Overview
+- Reflects tactics aligned with MITRE ATT&CK post-exploitation behavior  
+- Simulates how real attackers move from initial access to full compromise  
+- Demonstrates ability to identify misconfigurations, exploit them, and communicate impact clearly  
 
-- **Target Domain:** `megacorpone.com`
-- **Scope:** External (Internet-facing)
-- **Environment:** Lab-based (Kali Linux + Metasploitable)
-- **Methodology:** Reconnaissance → Scanning → Enumeration → Exploitation → Privilege Escalation → Reporting
+## 🚀 Scalability Beyond Bootcamp
 
----
+This project can be extended by:
 
-## 🔍 Phase 1: Reconnaissance
+- Simulating Blue Team defense using ELK or Splunk log ingestion  
+- Adding brute-force protection or access control hardening in a patched version  
+- Integrating reporting pipelines with tools like Dradis or Markdown automation  
 
-- Performed passive DNS recon using `nslookup` and `dig`
-- Conducted subdomain and IP discovery
-- Utilized `Google Dorking` to uncover sensitive directories and pages
+## 🔐 Vulnerability Summary
 
-📸 `Screenshots:`  
-- DNS resolution and domain IP discovery  
-- Open directory listing (`/assets/`)  
-- Google search results using `site:megacorpone.com`
+| Category              | Detail                                                                 |
+|-----------------------|------------------------------------------------------------------------|
+| Initial Access        | vsFTPd v2.3.4 backdoor (CVE-2011-2523)                                 |
+| Exploitation Technique| Used Nmap to detect vsFTPd backdoor and gained shell access           |
+| Privilege Escalation  | Harvested admin credentials from an exposed plaintext file            |
+| Root Access           | Used `sudo -l` to confirm full sudo rights and gained root shell      |
+| Post-Exploitation     | Accessed sensitive files, shadow password hash, and internal DNS data |
+| Cleanup               | Used `history -c` to erase evidence                                   |
 
----
+## 🔍 Phase Breakdown
 
-## 📡 Phase 2: Scanning & Enumeration
+### 1. Reconnaissance
+- Google dorking and directory indexing revealed `/assets/`, `/about`, and `/jobs` pages  
+- Used `nslookup` to discover MegaCorpOne's IP address  
+- Used Shodan to identify exposed services and CVEs  
+- Reviewed About Us and staff contact information to simulate open-source intel gathering  
 
-- Scanned target using `nmap` for open ports and services
-- Investigated the IP `149.56.244.87` on Shodan to enumerate exposed services
-- Identified Apache httpd vulnerabilities and OpenSSH fingerprints
+### 2. Scanning & Enumeration
+- Used HackerTarget for subdomain enumeration of `*.megacorpone.com`  
+- Scanned target with Nmap to detect open ports and services  
+- Discovered vsFTPd backdoor vulnerability on port 21  
+- Identified HTTP file paths that contained credential leaks  
 
-📸 `Screenshots:`  
-- Open ports: 22 (SSH), 80 (HTTP), 443 (HTTPS)  
-- Apache CVEs and service versions  
-- Bootstrap and jQuery JS libraries loaded in the web tech stack
+### 3. Exploitation
+- Gained shell access via vsFTPd 2.3.4 backdoor  
+- Located and dumped plaintext credentials from exposed `/tmp` file  
+- Verified sudo rights for `msfadmin` user to prepare for privilege escalation  
 
----
+### 4. Privilege Escalation
+- Used harvested credentials to gain full shell access  
+- Executed `sudo -l` to confirm unrestricted root access  
+- Switched user to root and validated permissions  
 
-## 🛠️ Phase 3: Exploitation
+### 5. Post-Exploitation
+- Exfiltrated `/etc/shadow`, DNS data, and internal documentation  
+- Ran internal enumeration commands to simulate lateral movement potential  
+- Used `history -c` to clean terminal command logs  
 
-- Exploited vulnerable `vsFTPd 2.3.4` service (CVE-2011-2523) to gain shell access
-- Used `Metasploit smb_login` module for brute-force authentication
-- Captured SMB/NTLMv2 hashes using `Responder`
+## ⚠️ Legal Disclaimer
 
-📸 `Screenshots:`  
-- Metasploit configuration and module output  
-- Responder poisoning output  
-- Cracked credentials and valid SSH login
-
----
-
-## 🚀 Phase 4: Post-Exploitation
-
-- Logged in with `msfadmin:cybersecurity` over SSH  
-- Confirmed root-level access using `sudo -i`
-- Located sensitive files and credentials (e.g., `adminpassword.txt`)
-- Identified various `tiki-admin` configuration files and CMS modules
-
-📸 `Screenshots:`  
-- Credential reuse from config files  
-- Escalated privilege session  
-- Directory traversal and information disclosure
-
----
-
-## 📑 Final Report Summary
-
-| Metric            | Value          |
-|-------------------|----------------|
-| Total Hosts       | 17             |
-| Vulnerabilities   | 5+             |
-| Credentials Found | 2              |
-| Access Gained     | Root (SSH)     |
-
-- Tools Used: `nmap`, `Shodan`, `Metasploit`, `Responder`, `Recon-ng`, `Google Dorks`
-- Exploits Leveraged: `vsFTPd backdoor`, `SMB brute-force`, `Directory Traversal`
-- Flags or Sensitive Data: `adminpassword.txt`, `NTLMv2 hashes`, root shell
-
----
-
-## 🧠 Lessons Learned
-
-- Importance of basic misconfigurations in initial access
-- How weak credentials and exposed services lead to full compromise
-- Real-world relevance of chaining multiple low-severity issues
-
----
-
-## 📁 Repo Structure
-
-```bash
-├── /screenshots/          # Full image documentation
-├── /notes/                # Optional markdown files for each phase
-├── README.md              # This file
-└── pentest-report.pdf     # (Optional) Final summary or template
+This project was conducted in a controlled lab environment. No systems, networks, or domains outside of the authorized lab scope were accessed. This content is for educational and professional development purposes only.
